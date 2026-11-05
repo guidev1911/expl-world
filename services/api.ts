@@ -7,7 +7,9 @@ export async function getApiResource(path: string): Promise<unknown> {
     throw new Error("NEXT_PUBLIC_API_URL não está configurada.");
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`);
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+
+  const response = await fetch(`${API_BASE_URL}${normalizedPath}`);
 
   if (!response.ok) {
     throw new ApiError(
@@ -16,6 +18,5 @@ export async function getApiResource(path: string): Promise<unknown> {
     );
   }
 
-  const body: unknown = await response.json();
-  return body;
+  return response.json();
 }
