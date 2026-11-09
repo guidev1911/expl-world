@@ -6,14 +6,22 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   partialPrefetching: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-    ],
-  },
+images: {
+  remotePatterns: [
+    {
+      protocol: "https",
+      hostname: "images.unsplash.com",
+    },
+    {
+      protocol: "https",
+      hostname: "www.receitamaneira.com.br",
+    },
+    {
+      protocol: "https",
+      hostname: "i0.wp.com",
+    },
+  ],
+},
   turbopack: {
     rules: {
       "*.css": {

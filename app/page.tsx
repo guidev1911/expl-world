@@ -1,10 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, Clock3, Compass } from "lucide-react";
-import { ArticleCard } from "@/components/common/article-card";
-import { categories, featuredArticles } from "@/data/mock-content";
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUpRight,
+  BookOpen,
+  Clock3,
+  Compass,
+} from "lucide-react";
 
-export default function Home() {
+import { ArticleCard } from "@/components/common/article-card";
+import { featuredArticles } from "@/data/mock-content";
+import { getCategories } from "@/services/category.service";
+
+export default async function Home() {
+  const categoriesResponse = await getCategories();
+  const categories = categoriesResponse.content;
+
   return (
     <main>
       <section className="hero">
@@ -58,8 +70,12 @@ export default function Home() {
       <section className="section section--categories page-shell" id="categories">
         <div className="section-heading">
           <div>
-            <p className="eyebrow"><span className="eyebrow__mark" /> Explore por interesse</p>
-            <h2>O mundo tem <span>camadas.</span></h2>
+            <p className="eyebrow">
+              <span className="eyebrow__mark" /> Explore por interesse
+            </p>
+            <h2>
+              O mundo tem <span>camadas.</span>
+            </h2>
           </div>
           <p className="section-heading__aside">
             Escolha um caminho. Cada assunto abre portas para muitos outros.
@@ -71,20 +87,28 @@ export default function Home() {
             <Link
               className={`category-card category-card--${category.slug}`}
               href={`/categories/${category.slug}`}
-              key={category.slug}
+              key={category.id}
             >
-              <Image
-                src={category.image}
-                alt={category.imageAlt}
-                fill
-                sizes="(max-width: 700px) 100vw, (max-width: 1050px) 50vw, 33vw"
-                className="category-card__image"
-              />
-              <span className="category-card__number">0{index + 1}</span>
+              {category.imageUrl && (
+                <Image
+                  src={category.imageUrl}
+                  alt={category.name}
+                  fill
+                  sizes="(max-width: 700px) 100vw, (max-width: 1050px) 50vw, 33vw"
+                  className="category-card__image"
+                />
+              )}
+
+              <span className="category-card__number">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
               <span className="category-card__content">
-                <span className="category-card__kicker">{category.kicker}</span>
+                <span className="category-card__kicker">Explore o tema</span>
                 <span className="category-card__title">{category.name}</span>
-                <span className="category-card__description">{category.description}</span>
+                <span className="category-card__description">
+                  {category.description ?? "Descubra conteúdos sobre este assunto."}
+                </span>
                 <span className="category-card__link">
                   Explorar categoria <ArrowUpRight size={16} aria-hidden="true" />
                 </span>
@@ -98,12 +122,18 @@ export default function Home() {
         <div className="page-shell">
           <div className="section-heading section-heading--latest">
             <div>
-              <p className="eyebrow"><span className="eyebrow__mark" /> Leituras para despertar ideias</p>
-              <h2>Uma descoberta <span>de cada vez.</span></h2>
+              <p className="eyebrow">
+                <span className="eyebrow__mark" /> Leituras para despertar ideias
+              </p>
+              <h2>
+                Uma descoberta <span>de cada vez.</span>
+              </h2>
             </div>
             <div className="section-heading__aside">
               <p>Pequenas perguntas. Grandes perspectivas.</p>
-              <span className="demo-label">Prévia editorial · conteúdo demonstrativo</span>
+              <span className="demo-label">
+                Prévia editorial · conteúdo demonstrativo
+              </span>
             </div>
           </div>
           <div className="article-grid">
@@ -118,9 +148,15 @@ export default function Home() {
         <div className="discovery__orb discovery__orb--one" aria-hidden="true" />
         <div className="discovery__orb discovery__orb--two" aria-hidden="true" />
         <div className="discovery__inner page-shell">
-          <div className="discovery__icon"><BookOpen size={22} aria-hidden="true" /></div>
+          <div className="discovery__icon">
+            <BookOpen size={22} aria-hidden="true" />
+          </div>
           <p className="eyebrow">Conhecimento que conecta</p>
-          <h2>O extraordinário começa<br />com um simples <span>“por quê?”</span></h2>
+          <h2>
+            O extraordinário começa
+            <br />
+            com um simples <span>“por quê?”</span>
+          </h2>
           <p className="discovery__copy">
             Siga sua curiosidade por ideias, histórias e explicações feitas para
             ampliar a forma como você enxerga o mundo.
