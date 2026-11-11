@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { ArticleCard } from "@/components/common/article-card";
 import { TopicCard } from "@/components/common/topic-card";
 import { articles, getTopicsByCategory } from "@/data/mock-content";
 import { getCategoryBySlug } from "@/services/category.service";
-export const instant = false;
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
@@ -24,14 +24,25 @@ export async function generateMetadata({
 
     return {
       title: category.name,
-      description: category.description ?? `Explore conteúdos sobre ${category.name}.`,
+      description:
+        category.description ?? `Explore conteúdos sobre ${category.name}.`,
     };
   } catch {
     return { title: "Categoria não encontrada" };
   }
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+function CategoryLoading() {
+  return (
+    <main className="page-section page-shell">
+      <div className="empty-state">
+        <p>Carregando categoria...</p>
+      </div>
+    </main>
+  );
+}
+
+async function CategoryContent({ params }: CategoryPageProps) {
   const { slug } = await params;
 
   let category;
@@ -75,7 +86,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             {category.name} <span>em foco.</span>
           </h1>
           <p className="editorial-heading__description">
-            {category.description ?? `Explore conteúdos sobre ${category.name}.`}
+            {category.description ??
+              `Explore conteúdos sobre ${category.name}.`}
           </p>
         </div>
       </section>
@@ -126,5 +138,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         )}
       </section>
     </main>
+  );
+}
+
+export default function CategoryPage({ params }: CategoryPageProps) {
+  return (
+    <Suspense fallback={<CategoryLoading />}>
+      <CategoryContent params={params} />
+    </Suspense>
   );
 }
