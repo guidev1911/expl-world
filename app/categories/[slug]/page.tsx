@@ -7,8 +7,9 @@ import { Suspense } from "react";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { ArticleCard } from "@/components/common/article-card";
 import { TopicCard } from "@/components/common/topic-card";
-import { articles, getTopicsByCategory } from "@/data/mock-content";
+import { articles } from "@/data/mock-content";
 import { getCategoryBySlug } from "@/services/category.service";
+import { getTopicsByCategory } from "@/services/topic.service";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
@@ -53,7 +54,9 @@ async function CategoryContent({ params }: CategoryPageProps) {
     notFound();
   }
 
-  const categoryTopics = getTopicsByCategory(slug);
+  const topicsResponse = await getTopicsByCategory(category.id);
+  const categoryTopics = topicsResponse.content;
+
   const categoryArticles = articles.filter(
     (article) => article.categorySlug === slug,
   );
@@ -82,21 +85,17 @@ async function CategoryContent({ params }: CategoryPageProps) {
           <p className="eyebrow">
             <span className="eyebrow__mark" /> Explore o tema
           </p>
+
           <h1>
             {category.name} <span>em foco.</span>
           </h1>
+
           <p className="editorial-heading__description">
             {category.description ??
               `Explore conteúdos sobre ${category.name}.`}
           </p>
         </div>
       </section>
-
-      <div className="demo-notice">
-        <span className="eyebrow__mark" aria-hidden="true" />
-        Conteúdo demonstrativo: estes tópicos e artigos são exemplos editoriais,
-        não dados da API.
-      </div>
 
       <section aria-labelledby="topics-heading">
         <div className="subsection-heading">
@@ -107,7 +106,11 @@ async function CategoryContent({ params }: CategoryPageProps) {
         {categoryTopics.length > 0 ? (
           <div className="topic-grid">
             {categoryTopics.map((topic) => (
-              <TopicCard topic={topic} key={topic.slug} />
+              <TopicCard
+                topic={topic}
+                categorySlug={category.slug}
+                key={topic.id}
+              />
             ))}
           </div>
         ) : (
@@ -120,6 +123,7 @@ async function CategoryContent({ params }: CategoryPageProps) {
       <section aria-labelledby="category-articles-heading">
         <div className="subsection-heading">
           <h2 id="category-articles-heading">Leituras em destaque</h2>
+
           <Link className="text-link" href="/#latest">
             Ver todas <ArrowRight size={14} aria-hidden="true" />
           </Link>
@@ -128,7 +132,11 @@ async function CategoryContent({ params }: CategoryPageProps) {
         {categoryArticles.length > 0 ? (
           <div className="article-grid">
             {categoryArticles.map((article, index) => (
-              <ArticleCard article={article} index={index} key={article.slug} />
+              <ArticleCard
+                article={article}
+                index={index}
+                key={article.slug}
+              />
             ))}
           </div>
         ) : (
