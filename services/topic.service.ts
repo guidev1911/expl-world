@@ -1,4 +1,3 @@
-
 import { cacheLife } from "next/cache";
 import { getApiResource } from "@/services/api";
 import type { Topic } from "@/types/content-api";
@@ -19,4 +18,16 @@ export async function getTopicsByCategory(
   return getApiResource(
     `/api/v1/topics/category/${categoryId}?page=${page}&size=${size}`,
   ) as Promise<ApiPage<Topic>>;
+}
+
+export async function getTopicBySlug(
+  categoryId: number,
+  slug: string,
+): Promise<Topic> {
+  "use cache";
+  cacheLife("minutes");
+
+  return getApiResource(
+    `/api/v1/topics/category/${categoryId}/${encodeURIComponent(slug)}`,
+  ) as Promise<Topic>;
 }
