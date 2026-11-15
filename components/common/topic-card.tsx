@@ -12,7 +12,7 @@ export function TopicCard({ topic, categorySlug }: TopicCardProps) {
   return (
     <Link
       className="topic-card"
-      href={`/categories/${categorySlug}/topics/${topic.slug}`}
+      href={`/topics/${topic.slug}?category=${categorySlug}`}
     >
       <span className="topic-card__top">
         <Layers3 size={17} strokeWidth={1.5} aria-hidden="true" />
