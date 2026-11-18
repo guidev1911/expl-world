@@ -28,11 +28,15 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
     ? article.topicName
     : category?.name ?? "Descobertas";
 
+  const articleHref = isApiArticle
+    ? `/articles/${article.slug}?topicId=${article.topicId}`
+    : `/articles/${article.slug}`;
+
   return (
     <article className="article-card">
       <Link
         className="article-card__image-wrap"
-        href={`/articles/${article.slug}`}
+        href={articleHref}
         aria-label={`Ler: ${article.title}`}
       >
         {image && (
@@ -55,23 +59,16 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
       <div className="article-card__body">
         <span className="article-card__category">{categoryName}</span>
 
-        <Link
-          className="article-card__title"
-          href={`/articles/${article.slug}`}
-        >
+        <Link className="article-card__title" href={articleHref}>
           {article.title}
         </Link>
 
         <p className="article-card__description">{description}</p>
 
-        <Link
-          className="article-card__read"
-          href={`/articles/${article.slug}`}
-        >
+        <Link className="article-card__read" href={articleHref}>
           Ler artigo <ArrowUpRight size={14} aria-hidden="true" />
         </Link>
       </div>
     </article>
   );
 }
-
